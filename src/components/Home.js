@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {
     Button,
-    Container,
-    Grow,
+    Container, FormControl,
+    Grow, InputLabel,
     makeStyles,
     MenuItem,
     Paper,
@@ -26,7 +26,11 @@ const useStyles = makeStyles(theme => ({
     form: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'center'
+    },
+    inputs: {
+        display: 'flex',
+        flexDirection: 'column',
         '& *': {
             marginBottom: theme.spacing(1),
         }
@@ -40,7 +44,10 @@ const useStyles = makeStyles(theme => ({
         width: '60%'
     },
     submitBtn: {
-        marginTop: theme.spacing(2)
+        marginTop: theme.spacing(2),
+    },
+    formControl: {
+        minWidth: 120
     }
 }))
 
@@ -54,7 +61,7 @@ const Home = () => {
     const [numberOfSlices, setNumberOfSlices] = useState()
     const [diameter, setDiameter] = useState()
 
-    const[spicinessScale, setSpicinessScale] = useState(1)
+    const [spicinessScale, setSpicinessScale] = useState(1)
 
     const [slicesOfBread, setSlicesOfBread] = useState();
 
@@ -68,80 +75,90 @@ const Home = () => {
         <Grow in>
             <Container maxWidth={"md"} className={classes.container}>
                 <Container maxWidth={"xs"}>
-                    <Paper className={classes.paper} elevation={5}>
+                    <Paper className={classes.paper} elevation={8}>
                         <form className={classes.form} onSubmit={handleSubmit}>
-                            <Typography variant={"h4"} className={classes.topLabel} gutterBottom={true}>Dishes!</Typography>
-                            <TextField
-                                label="name"
-                                variant="outlined"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                required
-                            />
-                            <TimeField
-                                showSeconds
-                                value={duration}
-                                onChange={(e) => setDuration(e.target.value)}
-                                style={{width: 92}}
-                                input={<TextField label="Duration" value={duration} variant="outlined" />}
-                                required
-                            />
-                            <Select
-                                label={"Type"}
-                                value={type}
-                                onChange={(e => setType(e.target.value))}
-                                className={classes.dishType}
-                            >
-                                <MenuItem value={"pizza"}>Pizza</MenuItem>
-                                <MenuItem value={"soup"}>Soup</MenuItem>
-                                <MenuItem value={"sandwich"}>Sandwich</MenuItem>
-                            </Select>
-                            {type === "pizza" && (
-                                <>
-                                    <TextField
-                                        label={"Number of slices"}
-                                        type={"number"}
-                                        value={numberOfSlices}
-                                        onChange={(e) => setNumberOfSlices(e.target.value)}
-                                        required
-                                    />
-                                    <TextField
-                                        label={"Diameter"}
-                                        type={"number"}
-                                        value={diameter}
-                                        onChange={(e) => setDiameter(e.target.value)}
-                                        required
-                                    />
-                                </>
-                            )}
-                            {type === "soup" && (
-                                <>
-                                    <Typography id="scale-slider" gutterBottom>
-                                        Spiciness scale
-                                    </Typography>
-                                    <Slider
-                                        value={spicinessScale}
-                                        onChange={(event, newValue) => setSpicinessScale(newValue)}
-                                        getAriaValueText={() => spicinessScale}
-                                        aria-labelledby="scale-slider"
-                                        valueLabelDisplay="auto"
-                                        step={1}
-                                        marks
-                                        min={1}
-                                        max={10}
-                                    />
-                                </>
-                            )}
-                            {type === "sandwich" && (
+                            <div className={classes.inputs}>
+                                <Typography variant={"h4"} className={classes.topLabel} gutterBottom={true} align={"center"}>Dishes! ☕️</Typography>
                                 <TextField
-                                    label={"Slices of bread"}
-                                    type={"number"}
-                                    defaultValue={slicesOfBread}
+                                    label="Name"
+                                    variant="outlined"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                     required
-                                    value={slicesOfBread}
-                                    onChange={(e) => setSlicesOfBread(e.target.value)}
                                 />
-                            )}
+                                <TimeField
+                                    showSeconds
+                                    value={duration}
+                                    onChange={(e) => setDuration(e.target.value)}
+                                    style={{width: '100%'}}
+                                    input={<TextField label="Duration" value={duration} variant="outlined" />}
+
+                                    required
+                                />
+                                <FormControl variant={"outlined"} className={classes.formControl}>
+                                    <InputLabel id="type-label">Type</InputLabel>
+                                    <Select
+                                        labelId="type-label"
+                                        id="type-select"
+                                        value={type}
+                                        onChange={(e => setType(e.target.value))}
+                                        label="Type"
+                                    >
+                                        <MenuItem value={"pizza"}>Pizza</MenuItem>
+                                        <MenuItem value={"soup"}>Soup</MenuItem>
+                                        <MenuItem value={"sandwich"}>Sandwich</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                {type === "pizza" && (
+                                    <>
+                                        <TextField
+                                            label={"Number of slices"}
+                                            type={"number"}
+                                            variant={"outlined"}
+                                            value={numberOfSlices}
+                                            onChange={(e) => setNumberOfSlices(e.target.value)}
+                                            required
+                                        />
+                                        <TextField
+                                            label={"Diameter"}
+                                            type={"number"}
+                                            variant={"outlined"}
+                                            value={diameter}
+                                            onChange={(e) => setDiameter(e.target.value)}
+                                            required
+                                        />
+                                    </>
+                                )}
+                                {type === "soup" && (
+                                    <>
+                                        <Typography id="scale-slider" gutterBottom>
+                                            Spiciness scale
+                                        </Typography>
+                                        <Slider
+                                            value={spicinessScale}
+                                            onChange={(event, newValue) => setSpicinessScale(newValue)}
+                                            getAriaValueText={() => spicinessScale}
+                                            aria-labelledby="scale-slider"
+                                            valueLabelDisplay="auto"
+                                            step={1}
+                                            marks
+                                            min={1}
+                                            max={10}
+                                        />
+                                    </>
+                                )}
+                                {type === "sandwich" && (
+                                    <TextField
+                                        label={"Slices of bread"}
+                                        type={"number"}
+                                        variant={"outlined"}
+                                        defaultValue={slicesOfBread}
+                                        required
+                                        value={slicesOfBread}
+                                        onChange={(e) => setSlicesOfBread(e.target.value)}
+                                    />
+                                )}
+                            </div>
                             <Button color={"primary"} variant={"contained"} type="submit" className={classes.submitBtn}>Submit</Button>
                         </form>
                     </Paper>

@@ -4,6 +4,11 @@ import {Container, Grow, makeStyles, Typography} from "@material-ui/core";
 const useStyles = makeStyles(theme => ({
     container: {
         marginTop: theme.spacing(3),
+        backgroundColor: 'white',
+        borderRadius: '20px',
+        boxShadow: '0px 2px 36px 0px rgba(0,0,0,0.75)',
+        paddingBottom: theme.spacing(3),
+        paddingTop: theme.spacing(2)
     },
     content: {
         width: '90%',
