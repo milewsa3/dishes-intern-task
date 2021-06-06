@@ -56,9 +56,29 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />
 }
 
+const preventNegativeNum = (val) => {
+    return val < 0 ? 0 : val;
+}
+
 const Home = () => {
     const classes = useStyles()
     const [submitBtnDisabled, setSubmitBtnDisabled] = useState(false)
+
+    // required data
+    const [name, setName] = useState("")
+    const [duration, setDuration] = useState('00:00:00')
+    const [type, setType] = useState("pizza")
+
+    // optional data
+    const [numberOfSlices, setNumberOfSlices] = useState('')
+    const [diameter, setDiameter] = useState('')
+    const [spicinessScale, setSpicinessScale] = useState(1)
+    const [slicesOfBread, setSlicesOfBread] = useState('');
+
+    // errors
+    const [errors, setErrors] = useState({})
+
+    // snackbar
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarSeverity, setSnackbarSeverity] = useState("success")
     const [snackbarMessage, setSnackbarMessage] = useState("")
@@ -71,44 +91,10 @@ const Home = () => {
         setOpenSnackbar(false);
     };
 
-    // errors
-    const [nameErr, setNameErr] = useState("")
-    const [durationErr, setDurationErr] = useState("");
-    const [typeErr, setTypeErr] = useState("");
-    const [numberOfSlicesErr, setNumberOfSlicesErr] = useState("");
-    const [diameterErr, setDiameterErr] = useState("");
-    const [slicesOfBreadErr, setSlicesOfBreadErr] = useState("");
-
-
-    const [name, setName] = useState("")
-    const [duration, setDuration] = useState('00:00:00')
-    const [type, setType] = useState("pizza")
-
-    //optional
-    const [numberOfSlices, setNumberOfSlices] = useState('')
-    const [diameter, setDiameter] = useState('')
-
-    const [spicinessScale, setSpicinessScale] = useState(1)
-
-    const [slicesOfBread, setSlicesOfBread] = useState('');
-
-    const preventNegativeNum = (val) => {
-        return val < 0 ? 0 : val;
-    }
-
-    const clearErrors = () => {
-        setNameErr("")
-        setDiameterErr("")
-        setTypeErr("")
-        setNumberOfSlicesErr("")
-        setDiameterErr("")
-        setSlicesOfBreadErr("")
-    }
-
     const handleSubmit = (e) => {
         e.preventDefault()
         setSubmitBtnDisabled(true)
-        clearErrors()
+        setErrors({})
 
         const data = {
             name,
@@ -130,32 +116,6 @@ const Home = () => {
             default:
         }
 
-        const handleError = (err) => {
-            for (const [key, value] of Object.entries(err)) {
-                switch (key) {
-                    case "name":
-                        setNameErr(value)
-                        break
-                    case "preparation_time":
-                        setDurationErr(value)
-                        break
-                    case "type":
-                        setTypeErr(value)
-                        break
-                    case "no_of_slices":
-                        setNumberOfSlicesErr(value)
-                        break
-                    case "diameter":
-                        setDiameterErr(value)
-                        break
-                    case "slices_of_bread":
-                        setSlicesOfBreadErr(value)
-                        break
-                    default:
-                }
-            }
-        }
-
         fetch('https://frosty-wood-6558.getsandbox.com:443/dishes', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -168,7 +128,7 @@ const Home = () => {
                     setSnackbarMessage("Dish sent correctly!")
                     setOpenSnackbar(true);
                 } else {
-                    handleError(data)
+                    setErrors(data)
                 }
 
                 setSubmitBtnDisabled(false)
@@ -181,6 +141,7 @@ const Home = () => {
                 console.log(err)
             })
     }
+
 
     return (
         <>
@@ -197,8 +158,8 @@ const Home = () => {
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         required
-                                        error={Boolean(nameErr)}
-                                        helperText={nameErr}
+                                        error={Boolean(errors?.name)}
+                                        helperText={errors?.name}
                                     />
                                     <TimeField
                                         showSeconds
@@ -207,13 +168,13 @@ const Home = () => {
                                         style={{width: '100%'}}
                                         input={<TextField label="Duration" value={duration} variant="outlined" />}
                                         required
-                                        error={Boolean(durationErr)}
-                                        helperText={durationErr}
+                                        error={Boolean(errors?.preparation_time)}
+                                        helperText={errors?.preparation_time}
                                     />
                                     <FormControl
                                         variant={"outlined"}
                                         className={classes.formControl}
-                                        error={Boolean(typeErr)}
+                                        error={Boolean(errors?.type)}
                                     >
                                         <InputLabel id="type-label">Type</InputLabel>
                                         <Select
@@ -237,8 +198,8 @@ const Home = () => {
                                                 value={numberOfSlices}
                                                 onChange={(e) => setNumberOfSlices(preventNegativeNum(e.target.value))}
                                                 required
-                                                error={Boolean(numberOfSlicesErr)}
-                                                helperText={numberOfSlicesErr}
+                                                error={Boolean(errors?.no_of_slices)}
+                                                helperText={errors?.no_of_slices}
                                             />
                                             <TextField
                                                 label={"Diameter"}
@@ -247,8 +208,8 @@ const Home = () => {
                                                 value={diameter}
                                                 onChange={(e) => setDiameter(preventNegativeNum(e.target.value))}
                                                 required
-                                                error={Boolean(diameterErr)}
-                                                helperText={diameterErr}
+                                                error={Boolean(errors?.diameter)}
+                                                helperText={errors?.diameter}
                                             />
                                         </>
                                     )}
@@ -278,8 +239,8 @@ const Home = () => {
                                             required
                                             value={slicesOfBread}
                                             onChange={(e) => setSlicesOfBread(preventNegativeNum(e.target.value))}
-                                            error={Boolean(slicesOfBreadErr)}
-                                            helperText={slicesOfBreadErr}
+                                            error={Boolean(errors?.slices_of_bread)}
+                                            helperText={errors?.slices_of_bread}
                                         />
                                     )}
                                 </div>
